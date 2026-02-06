@@ -1,0 +1,110 @@
+XBO BANK — FRAUD PROTECTION & DISPUTE RESOLUTION
+====================================================
+
+UNAUTHORIZED TRANSACTIONS & ZERO LIABILITY
+--------------------------------------------
+
+XBO Bank provides Zero Liability Protection on all personal debit and credit card accounts. If unauthorized transactions are identified on your account, you will not be held responsible for fraudulent charges, provided they are reported promptly.
+
+Reporting Requirements:
+- Credit Card Fraud: Report unauthorized transactions within 60 days of the statement date on which the charge first appeared. Under the Fair Credit Billing Act (FCBA), your maximum liability is $50 for unauthorized credit card charges reported within this window — however, XBO Bank's Zero Liability policy waives even this amount for customers who report promptly and in good faith.
+- Debit Card Fraud: Under the Electronic Fund Transfer Act (EFTA), liability depends on when fraud is reported:
+  - Within 2 business days of discovery: Maximum liability $0 (XBO Zero Liability)
+  - 3–60 days after statement: Maximum liability up to $500 under federal law, but XBO Bank typically waives this for customers in good standing
+  - After 60 days: Customer may be liable for the full amount of unauthorized transfers occurring after the 60-day window
+- Report fraud IMMEDIATELY by calling 1-800-926-2265, option 5, available 24/7, or through the XBO Mobile App > More > Report Fraud.
+
+FRAUD INVESTIGATION PROCESS
+-----------------------------
+
+Step 1 — Report & Secure
+- Call 1-800-926-2265, option 5, or report via the XBO Mobile App
+- Your current debit or credit card will be immediately deactivated to prevent further unauthorized use
+- A replacement card is issued and shipped via expedited delivery (arrives within 2–3 business days at no charge)
+- A temporary virtual card number is available immediately in the XBO Mobile App for online and contactless purchases while you wait for your physical card
+
+Step 2 — Provisional Credit
+- For qualifying claims, XBO Bank issues a provisional (temporary) credit to your account within 3 business days of the fraud report
+- Provisional credit covers the full amount of the disputed unauthorized transactions
+- This credit remains on your account while the investigation is conducted
+
+Step 3 — Investigation
+- XBO Bank's Fraud Investigation Team reviews the claim, which includes analyzing transaction data, merchant information, geolocation data, and account activity patterns
+- Standard investigation period: 10 business days for debit card claims; 30 days for credit card claims (as permitted under Regulation E and the FCBA)
+- For new accounts (open less than 30 days), the investigation may take up to 20 business days for debit card claims
+- You may be asked to complete a written Fraud Affidavit (mailed or emailed to you); this must be returned within 10 business days of receipt
+
+Step 4 — Resolution
+- Written notification of the investigation outcome is sent via email and/or mail within 3 business days of the decision
+- If the claim is approved: Provisional credit becomes permanent. No further action is required.
+- If the claim is denied: The provisional credit is reversed, and a detailed explanation is provided. You may appeal the decision within 30 days by providing additional documentation to fraud@xbobank.com.
+
+TRANSACTION DISPUTES (NON-FRAUD)
+----------------------------------
+
+If you have a billing dispute that is not fraud-related (e.g., incorrect charge amount, duplicate charge, merchandise not received, services not rendered, cancelled subscription still billing), you may file a transaction dispute.
+
+How to File:
+1. XBO Mobile App: Accounts > Transaction History > Select transaction > "Dispute This Transaction"
+2. Online Banking: Account Activity > Select transaction > "File a Dispute"
+3. Phone: Call 1-800-926-2265, option 2, then option 3
+4. In-Branch: Visit any XBO Bank branch with your statement and supporting documentation
+
+Information Needed:
+- Transaction date, amount, and merchant name
+- Reason for dispute (select from: wrong amount, duplicate charge, item not received, item not as described, cancelled recurring charge, other)
+- Supporting documentation (receipts, cancellation confirmation, correspondence with the merchant, photos of defective merchandise)
+
+Timeline:
+- Provisional credit: Issued within 5 business days for disputes over $25
+- Investigation period: Up to 30 days (60 days for international transactions)
+- Resolution notification: Written decision sent within 3 business days of investigation completion
+
+Important: Before filing a dispute, we recommend contacting the merchant directly to attempt resolution. Many billing issues can be resolved faster through the merchant's own customer service.
+
+ATM ISSUES
+-----------
+
+- ATM did not dispense cash but account was debited: Report immediately by calling 1-800-926-2265, option 5. Provisional credit issued within 1 business day. Investigation completed within 10 business days.
+- ATM retained your card: Contact the branch associated with the ATM during business hours. If it is an XBO ATM, your card will be securely destroyed; a replacement will be mailed. If it is a non-XBO ATM, contact the ATM owner's bank.
+- Incorrect deposit amount credited: Report within 30 days by calling customer service. The ATM deposit envelope will be retrieved and verified; account adjusted within 5 business days.
+
+IDENTITY THEFT
+---------------
+
+If you suspect you are a victim of identity theft involving your XBO Bank accounts:
+1. Call 1-800-926-2265, option 5, immediately to freeze all accounts
+2. File a report with the Federal Trade Commission (FTC) at IdentityTheft.gov
+3. File a police report with your local law enforcement agency
+4. Request a fraud alert or credit freeze with all three credit bureaus:
+   - Equifax: 1-800-525-6285
+   - Experian: 1-888-397-3742
+   - TransUnion: 1-800-680-7289
+5. XBO Bank will assign a dedicated Identity Theft Resolution Specialist to your case, who will guide you through the recovery process and monitor your accounts for 12 months at no charge.
+
+FRAUD PREVENTION TIPS
+----------------------
+
+- Never share your password, PIN, or one-time verification codes with anyone — XBO Bank will NEVER ask for these via phone, email, or text
+- Enable transaction alerts in the XBO Mobile App (Settings > Notifications > Transaction Alerts) to receive real-time push notifications for all account activity
+- Set up account alerts for transactions over a specified amount (e.g., $100+)
+- Review your account statements and transaction history regularly
+- Use strong, unique passwords for your online banking and update them every 90 days
+- Be cautious of phishing emails and texts — XBO Bank will never send unsolicited links asking you to verify your account information
+- When shopping online, look for "https://" and a padlock icon in the browser address bar
+- Report suspicious emails to phishing@xbobank.com
+- If you receive a suspicious call claiming to be from XBO Bank, hang up and call us directly at 1-800-926-2265
+
+CONTACT INFORMATION FOR FRAUD & DISPUTES
+------------------------------------------
+
+- 24/7 Fraud Hotline: 1-800-926-2265, option 5
+- Fraud Email: fraud@xbobank.com (response within 4 hours)
+- In-App Reporting: XBO Mobile App > More > Report Fraud
+- Online Dispute Portal: www.xbobank.com/disputes
+- Mailing Address for Written Disputes:
+    XBO Bank Dispute Resolution Center
+    P.O. Box 15284
+    Wilmington, DE 19850-5284
+
+For any questions about fraud protection or to report suspicious activity, contact us immediately at 1-800-926-2265, option 5.
