@@ -17,10 +17,10 @@ import re
 from typing import TypedDict
 
 from langchain_anthropic import ChatAnthropic
-from langchain.schema import HumanMessage
+from langchain_core.messages import HumanMessage
 from langgraph.graph import StateGraph, END
 
-from agents.prompts import (
+from .prompts import (
     REFORMULATION_AGENT_PROMPT,
     SEARCH_AGENT_PROMPT,
     VALIDATION_AGENT_PROMPT,
@@ -30,9 +30,11 @@ from agents.prompts import (
 # LLM initialisation
 # ---------------------------------------------------------------------------
 
+# LLM initialisation
+# ---------------------------------------------------------------------------
+
 llm = ChatAnthropic(
-    model="claude-sonnet-4-20250514",
-    anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"),
+    model="claude-3-5-sonnet-20241022",
     temperature=0.0,
     max_tokens=2048,
 )

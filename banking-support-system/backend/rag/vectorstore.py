@@ -15,13 +15,19 @@ Usage:
 """
 
 import os
+import warnings
 from pathlib import Path
 from typing import List
 
-from langchain.schema import Document
-from langchain.text_splitter import RecursiveCharacterTextSplitter
+# Suppress TensorFlow and protobuf warnings BEFORE any imports
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+warnings.filterwarnings('ignore', category=UserWarning, module='google.protobuf.runtime_version')
+
+from langchain_core.documents import Document
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import Chroma
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 
 KNOWLEDGE_BASE_DIR = Path(__file__).resolve().parent.parent / "knowledge_base"
 CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", "./chroma_db")

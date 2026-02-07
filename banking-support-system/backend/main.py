@@ -11,7 +11,14 @@ Run:
 
 import os
 import time
+import warnings
+from contextlib import asynccontextmanager
 from pathlib import Path
+
+# Suppress warnings and set TensorFlow environment variables BEFORE any imports
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+warnings.filterwarnings('ignore', category=UserWarning, module='google.protobuf.runtime_version')
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException
@@ -38,39 +45,20 @@ CHROMA_DB_PATH = os.getenv("CHROMA_DB_PATH", "./chroma_db")
 KNOWLEDGE_BASE_DIR = Path(__file__).resolve().parent / "knowledge_base"
 
 # ---------------------------------------------------------------------------
-# FastAPI app
+# Lifespan context manager
 # ---------------------------------------------------------------------------
-
-app = FastAPI(
-    title="Banking Multi-Agent Support System",
-    description=(
-        "AI-powered customer service support with RAG and multi-agent system"
-    ),
-    version="1.0.0",
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
 
 # Will be set during startup
 agent_graph = None
 
 
-# ---------------------------------------------------------------------------
-# Startup
-# ---------------------------------------------------------------------------
-
-@app.on_event("startup")
-async def startup_event():
-    """Initialise the database, vector store, and agent graph."""
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """Initialise the database, vector store, and agent graph on startup."""
 
     global agent_graph
 
+    # Startup
     # 1. Database
     await init_database()
     print("[startup] Database initialised.")
@@ -89,6 +77,33 @@ async def startup_event():
     agent_graph = create_agent_graph(vectorstore)
     print("[startup] Multi-agent graph compiled and ready.")
     print("[startup] Banking Multi-Agent Support System is operational.")
+
+    yield
+
+    # Shutdown (cleanup if needed)
+    print("[shutdown] Banking Multi-Agent Support System shutting down.")
+
+
+# ---------------------------------------------------------------------------
+# FastAPI app
+# ---------------------------------------------------------------------------
+
+app = FastAPI(
+    title="Banking Multi-Agent Support System",
+    description=(
+        "AI-powered customer service support with RAG and multi-agent system"
+    ),
+    version="1.0.0",
+    lifespan=lifespan,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 # ---------------------------------------------------------------------------
