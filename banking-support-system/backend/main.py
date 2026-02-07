@@ -9,6 +9,7 @@ Run:
     uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 """
 
+import logging
 import os
 import time
 import warnings
@@ -36,6 +37,16 @@ from rag.vectorstore import (
 )
 
 # ---------------------------------------------------------------------------
+# Logging
+# ---------------------------------------------------------------------------
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+)
+logger = logging.getLogger("banking_support")
+
+# ---------------------------------------------------------------------------
 # Environment
 # ---------------------------------------------------------------------------
 
@@ -58,30 +69,40 @@ async def lifespan(app: FastAPI):
 
     global agent_graph
 
-    # Startup
+    # 0. Check API key
+    api_key = os.getenv("ANTHROPIC_API_KEY", "")
+    if not api_key or api_key == "your_anthropic_key_here":
+        logger.error(
+            "ANTHROPIC_API_KEY is missing or set to placeholder! "
+            "Edit backend/.env and add your real key."
+        )
+    else:
+        masked = api_key[:8] + "..." + api_key[-4:]
+        logger.info(f"ANTHROPIC_API_KEY loaded: {masked}")
+
     # 1. Database
     await init_database()
-    print("[startup] Database initialised.")
+    logger.info("Database initialised.")
 
     # 2. Vector store
     if Path(CHROMA_DB_PATH).exists():
-        print("[startup] Existing ChromaDB found — loading from disk.")
+        logger.info("Existing ChromaDB found — loading from disk.")
         vectorstore = load_existing_vectorstore()
     else:
-        print("[startup] No ChromaDB found — building from knowledge base.")
+        logger.info("No ChromaDB found — building from knowledge base.")
         documents = load_knowledge_base()
         chunks = chunk_documents(documents)
         vectorstore = initialize_vectorstore(chunks)
 
     # 3. Agent graph
     agent_graph = create_agent_graph(vectorstore)
-    print("[startup] Multi-agent graph compiled and ready.")
-    print("[startup] Banking Multi-Agent Support System is operational.")
+    logger.info("Multi-agent graph compiled and ready.")
+    logger.info("Banking Multi-Agent Support System is operational.")
 
     yield
 
     # Shutdown (cleanup if needed)
-    print("[shutdown] Banking Multi-Agent Support System shutting down.")
+    logger.info("Banking Multi-Agent Support System shutting down.")
 
 
 # ---------------------------------------------------------------------------
@@ -131,6 +152,7 @@ async def process_query(request: QueryRequest):
             detail="Agent system is still initialising. Please try again shortly.",
         )
 
+    logger.info(f"Processing query from '{request.rep_name}': {request.question[:80]}...")
     start_time = time.time()
 
     try:
@@ -145,12 +167,18 @@ async def process_query(request: QueryRequest):
             "improvement_needed": "",
         })
     except Exception as exc:
+        logger.error(f"Agent pipeline failed: {exc}", exc_info=True)
         raise HTTPException(
             status_code=500,
             detail=f"Agent pipeline failed: {exc}",
         )
 
     response_time_ms = int((time.time() - start_time) * 1000)
+    logger.info(
+        f"Query completed in {response_time_ms}ms — "
+        f"confidence={result.get('confidence_score', 0)}%, "
+        f"source={result.get('source_document', 'N/A')}"
+    )
 
     # Log to database (fire-and-forget; don't fail the request on DB errors)
     try:
@@ -164,7 +192,7 @@ async def process_query(request: QueryRequest):
             "response_time_ms": response_time_ms,
         })
     except Exception as exc:
-        print(f"[query] Failed to log query to database: {exc}")
+        logger.warning(f"Failed to log query to database: {exc}")
 
     return QueryResponse(
         original_question=result.get("original_question", request.question),

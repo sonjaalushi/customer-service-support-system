@@ -1,0 +1,25 @@
+# Environment secrets
+.env
+backend/.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.venv/
+
+# ChromaDB persisted data
+chroma_db/
+backend/chroma_db/
+
+# SQLite
+*.db
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/

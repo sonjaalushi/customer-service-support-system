@@ -12,6 +12,7 @@ Usage:
     result = graph.invoke({"original_question": "How do I open an account?"})
 """
 
+import logging
 import os
 import re
 from typing import TypedDict
@@ -26,18 +27,45 @@ from .prompts import (
     VALIDATION_AGENT_PROMPT,
 )
 
+logger = logging.getLogger("banking_support.agents")
+
 # ---------------------------------------------------------------------------
 # LLM initialisation
 # ---------------------------------------------------------------------------
 
-# LLM initialisation
-# ---------------------------------------------------------------------------
 
-llm = ChatAnthropic(
-    model="claude-3-5-sonnet-20241022",
-    temperature=0.0,
-    max_tokens=2048,
-)
+def _create_llm() -> ChatAnthropic:
+    """Create the LLM instance, reading the API key at call time (not import time).
+
+    This ensures ``load_dotenv()`` in main.py has already run before we
+    read ``ANTHROPIC_API_KEY``.
+    """
+
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key or api_key == "your_anthropic_key_here":
+        logger.error(
+            "ANTHROPIC_API_KEY is not set! All agent calls will fail. "
+            "Fix: add your real key to backend/.env"
+        )
+
+    return ChatAnthropic(
+        model="claude-sonnet-4-20250514",
+        anthropic_api_key=api_key,
+        temperature=0.0,
+        max_tokens=2048,
+    )
+
+
+# Lazy singleton — created on first use via create_agent_graph()
+_llm: ChatAnthropic | None = None
+
+
+def _get_llm() -> ChatAnthropic:
+    global _llm
+    if _llm is None:
+        _llm = _create_llm()
+    return _llm
+
 
 # ---------------------------------------------------------------------------
 # Agent state schema
@@ -63,15 +91,18 @@ class AgentState(TypedDict):
 def reformulation_agent(state: AgentState) -> AgentState:
     """Transform the raw customer question into a precise, keyword-rich search query."""
 
+    llm = _get_llm()
     prompt = REFORMULATION_AGENT_PROMPT.format(query=state["original_question"])
 
     try:
+        logger.info("[reformulation] Calling Claude to reformulate query...")
         response = llm.invoke([HumanMessage(content=prompt)])
         reformulated = response.content.strip()
+        logger.info(f"[reformulation] Result: {reformulated[:120]}")
     except Exception as e:
         # On failure, pass the original question through so the pipeline can continue
         reformulated = state["original_question"]
-        print(f"[reformulation_agent] LLM call failed, using original question: {e}")
+        logger.error(f"[reformulation] LLM call failed, using original question: {e}")
 
     return {**state, "reformulated_query": reformulated}
 
@@ -82,10 +113,12 @@ def _build_search_node(vectorstore):
     def search_agent(state: AgentState) -> AgentState:
         """Retrieve relevant context from the vector store and generate an answer."""
 
+        llm = _get_llm()
         query = state["reformulated_query"]
 
         # --- Retrieve documents from ChromaDB ---------------------------------
         try:
+            logger.info(f"[search] Retrieving documents for: {query[:80]}")
             docs = vectorstore.similarity_search(query, k=3)
             context_parts = []
             source_files = set()
@@ -96,12 +129,14 @@ def _build_search_node(vectorstore):
                     f"[Source: {source}]\n{doc.page_content}"
                 )
             context = "\n\n---\n\n".join(context_parts) if context_parts else ""
+            logger.info(f"[search] Retrieved {len(docs)} chunks from: {', '.join(sorted(source_files))}")
         except Exception as e:
             context = ""
             source_files = set()
-            print(f"[search_agent] Vector store retrieval failed: {e}")
+            logger.error(f"[search] Vector store retrieval failed: {e}")
 
         if not context:
+            logger.warning("[search] No context retrieved — returning fallback answer")
             return {
                 **state,
                 "retrieved_context": "",
@@ -117,10 +152,12 @@ def _build_search_node(vectorstore):
         prompt = SEARCH_AGENT_PROMPT.format(query=query, context=context)
 
         try:
+            logger.info("[search] Calling Claude to generate answer...")
             response = llm.invoke([HumanMessage(content=prompt)])
             raw_answer = response.content.strip()
+            logger.info(f"[search] Answer generated ({len(raw_answer)} chars)")
         except Exception as e:
-            print(f"[search_agent] LLM call failed: {e}")
+            logger.error(f"[search] LLM call failed: {e}")
             return {
                 **state,
                 "retrieved_context": context,
@@ -155,6 +192,7 @@ def _build_search_node(vectorstore):
 def validation_agent(state: AgentState) -> AgentState:
     """Evaluate the generated answer for accuracy, completeness, and quality."""
 
+    llm = _get_llm()
     prompt = VALIDATION_AGENT_PROMPT.format(
         original_query=state["original_question"],
         reformulated_query=state["reformulated_query"],
@@ -163,10 +201,11 @@ def validation_agent(state: AgentState) -> AgentState:
     )
 
     try:
+        logger.info("[validation] Calling Claude to validate answer...")
         response = llm.invoke([HumanMessage(content=prompt)])
         raw_validation = response.content.strip()
     except Exception as e:
-        print(f"[validation_agent] LLM call failed: {e}")
+        logger.error(f"[validation] LLM call failed: {e}")
         return {
             **state,
             "confidence_score": 0,
@@ -176,6 +215,7 @@ def validation_agent(state: AgentState) -> AgentState:
 
     # --- Parse confidence score -----------------------------------------------
     confidence_score = _parse_confidence_score(raw_validation)
+    logger.info(f"[validation] Confidence score: {confidence_score}%")
 
     # --- Parse reasoning ------------------------------------------------------
     reasoning = _extract_section(raw_validation, "Reasoning")
@@ -211,6 +251,9 @@ def create_agent_graph(vectorstore):
         A compiled LangGraph ``StateGraph`` ready to be invoked with
         ``{"original_question": "..."}``.
     """
+
+    # Ensure LLM is initialised (reads API key from env)
+    _get_llm()
 
     workflow = StateGraph(AgentState)
 
